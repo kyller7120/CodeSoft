@@ -1,0 +1,20 @@
+databases:
+  - name: sic_db
+    databaseName: sic_db
+    user: sic_db_user
+
+services:
+  - type: web
+    name: CodeSoft
+    runtime: python
+    buildCommand: "./render/build.sh"
+    startCommand: "gunicorn CodeSoft.wsgi:application" 
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sic_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
