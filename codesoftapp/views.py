@@ -7,7 +7,8 @@ from django.db.models import Q
 from django.db.models import Sum, FloatField, Case, When, F, Value, IntegerField, DecimalField
 from decimal import Decimal
 
-
+cuenta_a_eliminar = Cuenta.objects.get(codigo='0')
+cuenta_a_eliminar.delete()
 capital_debe_gen = 0
 capital_haber_gen = 0
 
