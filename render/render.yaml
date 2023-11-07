@@ -1,6 +1,6 @@
 databases:
-  - name: sic_db
-    databaseName: sic_db
+  - name: sic_db_ea71
+    databaseName: sic_db_ea71
     user: sic_db_user
 
 services:
