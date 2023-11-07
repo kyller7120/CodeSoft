@@ -457,24 +457,6 @@ def resultados(request, periodo_id=None):
         debe_total=Coalesce(F('resumen_cuentas__debe_total'), 0),
         haber_total=Coalesce(F('resumen_cuentas__haber_total'), 0)
     )
-
-    ##2104
-    suma_debe_totaldeb = consultas.filter(codigo='2104').aggregate(
-        Sum('debe_total', output_field=DecimalField())
-    )['debe_total__sum'] or Decimal(0)
-
-    suma_haber_totaldeb = consultas.filter(codigo='2104').aggregate(
-        Sum('haber_total', output_field=DecimalField())
-    )['haber_total__sum'] or Decimal(0)
-
-    if suma_debe_totaldeb < 0:
-        suma_haber_totaldeb = -1 * suma_debe_totaldeb
-        suma_debe_totaldeb = Decimal(0)
-
-    if suma_haber_totaldeb < 0:
-        suma_debe_totaldeb = -1 * suma_haber_totaldeb
-        suma_haber_totaldeb = Decimal(0)
-
     ##4101
     suma_debe_total1 = consultas.filter(codigo='4101').aggregate(
         Sum('debe_total', output_field=DecimalField())
