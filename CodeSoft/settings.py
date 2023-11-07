@@ -100,7 +100,7 @@ WSGI_APPLICATION = 'CodeSoft.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
 
-        default='postgres://sic_db_user:oVZDCmleYUnY2qLtSGEVzbYfNE6UTSi4@dpg-ckspa1237rbc73b2lhcg-a/sic_db',
+        default='postgres://sic_db_ea71_user:CJlL2LzdBf4qqnAviB8tmkVjHpgdlmY6@dpg-cl51bbql7jac73c9s9r0-a/sic_db_ea71',
         conn_max_age=600
     )
 }
