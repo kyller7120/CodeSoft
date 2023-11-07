@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.db.models import Sum, FloatField, Case, When, F, Value, IntegerField, DecimalField
 from decimal import Decimal
+from django.db.models.functions import Coalesce
+
 
 capital_debe_gen = 0
 capital_haber_gen = 0
@@ -13,8 +15,6 @@ capital_haber_gen = 0
 # Vista para la página de inicio
 @login_required
 def inicio(request):
-    #cuenta_a_eliminar = Cuenta.objects.get(codigo='0')
-    #cuenta_a_eliminar.delete()
     return render(request, 'index.html')
 
 # Vista para cerrar sesión
@@ -433,18 +433,8 @@ def general(request):
                             'debe_total':debe_total
                         })
 
-
-from decimal import Decimal
-from django.db.models import F, ExpressionWrapper, DecimalField, Sum
-from django.db.models.functions import Coalesce
-
 @login_required
 def resultados(request, periodo_id=None):
-    suma_debe_total1, suma_haber_total1, suma_debe_total2, suma_haber_total2, suma_debe_total3, suma_haber_total3, suma_debe_total4, suma_haber_total4, suma_debe_total5, suma_haber_total5, suma_debe_total6, suma_haber_total6, suma_debe_total7, suma_haber_total7, suma_debe_total8, suma_haber_total8, suma_debe_total9, suma_haber_total9, suma_debe_total10, suma_haber_total10, suma_debe_total11, suma_haber_total11, suma_debe_total12, suma_haber_total12, suma_debe_total13, suma_haber_total13, suma_debe_total14, suma_haber_total14 = [0] * 28
-    suma_debe = 0
-    suma_haber = 0
-    utilidades_debe = 0
-    utilidades_haber = 0
     if request.method == 'POST':
         periodo_id = request.POST.get('periodo')
         
@@ -462,6 +452,24 @@ def resultados(request, periodo_id=None):
         debe_total=Coalesce(F('resumen_cuentas__debe_total'), 0),
         haber_total=Coalesce(F('resumen_cuentas__haber_total'), 0)
     )
+
+    ##2104
+    suma_debe_totaldeb = consultas.filter(codigo='2104').aggregate(
+        Sum('debe_total', output_field=DecimalField())
+    )['debe_total__sum'] or Decimal(0)
+
+    suma_haber_totaldeb = consultas.filter(codigo='2104').aggregate(
+        Sum('haber_total', output_field=DecimalField())
+    )['haber_total__sum'] or Decimal(0)
+
+    if suma_debe_totaldeb < 0:
+        suma_haber_totaldeb = -1 * suma_debe_totaldeb
+        suma_debe_totaldeb = Decimal(0)
+
+    if suma_haber_totaldeb < 0:
+        suma_debe_totaldeb = -1 * suma_haber_totaldeb
+        suma_haber_totaldeb = Decimal(0)
+
     ##4101
     suma_debe_total1 = consultas.filter(codigo='4101').aggregate(
         Sum('debe_total', output_field=DecimalField())
@@ -712,28 +720,6 @@ def resultados(request, periodo_id=None):
                   suma_haber_total13 + suma_haber_total14)
 
 
-#########################
-    utilidades_haber = suma_haber - suma_debe
-    if request.method == "POST":
-        periodo_id = request.POST.get('periodo')
-
-    if periodo_id:
-        periodo_seleccionado = get_object_or_404(Periodo, pk=periodo_id)
-
-        # Utiliza get_or_create para crear o actualizar la Utilidad directamente
-        utilidad, created = Utilidad.objects.get_or_create(periodo=periodo_seleccionado, defaults={'valor_utilidad': utilidades_haber})
-
-        # Actualiza el valor de utilidad en cualquier caso (nueva o existente)
-        utilidad.valor_utilidad = utilidades_haber
-        utilidad.save()
-
-
-            
-    
-    utilidades_debe = 0
-    if utilidades_haber < 0:
-        utilidades_debe = utilidades_haber * -1
-        utilidades_haber = 0
 
     return render(request, 'estadosfinancieros/resultados.html', {
         'suma_debe_total1': suma_debe_total1,
@@ -766,8 +752,6 @@ def resultados(request, periodo_id=None):
         'suma_haber_total14': suma_haber_total14,
         'suma_debe': suma_debe,
         'suma_haber': suma_haber,
-        'utilidades_haber': utilidades_haber,
-        'utilidades_debe':utilidades_debe,
         'periodos': periodos,
         'periodo_seleccionado': periodo_seleccionado,
     })
