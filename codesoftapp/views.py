@@ -13,8 +13,8 @@ capital_haber_gen = 0
 # Vista para la página de inicio
 @login_required
 def inicio(request):
-    cuenta_a_eliminar = Cuenta.objects.get(codigo='0')
-    cuenta_a_eliminar.delete()
+    #cuenta_a_eliminar = Cuenta.objects.get(codigo='0')
+    #cuenta_a_eliminar.delete()
     return render(request, 'index.html')
 
 # Vista para cerrar sesión
