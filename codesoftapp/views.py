@@ -720,6 +720,23 @@ def resultados(request, periodo_id=None):
                   suma_haber_total13 + suma_haber_total14)
 
 
+#########################
+    utilidades_haber = suma_haber - suma_debe
+
+    if periodo_id:
+        periodo_seleccionado = get_object_or_404(Periodo, pk=periodo_id)
+
+        # Utiliza get_or_create para crear o actualizar la Utilidad directamente
+        utilidad, created = Utilidad.objects.get_or_create(periodo=periodo_seleccionado, defaults={'valor_utilidad': utilidades_haber})
+
+        # Actualiza el valor de utilidad en cualquier caso (nueva o existente)
+        utilidad.valor_utilidad = utilidades_haber
+        utilidad.save()
+    
+    utilidades_debe = 0
+    if utilidades_haber < 0:
+        utilidades_debe = utilidades_haber * -1
+        utilidades_haber = 0
 
     return render(request, 'estadosfinancieros/resultados.html', {
         'suma_debe_total1': suma_debe_total1,
@@ -752,6 +769,8 @@ def resultados(request, periodo_id=None):
         'suma_haber_total14': suma_haber_total14,
         'suma_debe': suma_debe,
         'suma_haber': suma_haber,
+        'utilidades_haber': utilidades_haber,
+        'utilidades_debe':utilidades_debe,
         'periodos': periodos,
         'periodo_seleccionado': periodo_seleccionado,
     })
