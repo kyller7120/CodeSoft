@@ -440,6 +440,11 @@ from django.db.models.functions import Coalesce
 
 @login_required
 def resultados(request, periodo_id=None):
+    suma_debe_total1, suma_haber_total1, suma_debe_total2, suma_haber_total2, suma_debe_total3, suma_haber_total3, suma_debe_total4, suma_haber_total4, suma_debe_total5, suma_haber_total5, suma_debe_total6, suma_haber_total6, suma_debe_total7, suma_haber_total7, suma_debe_total8, suma_haber_total8, suma_debe_total9, suma_haber_total9, suma_debe_total10, suma_haber_total10, suma_debe_total11, suma_haber_total11, suma_debe_total12, suma_haber_total12, suma_debe_total13, suma_haber_total13, suma_debe_total14, suma_haber_total14 = [0] * 28
+    suma_debe = 0
+    suma_haber = 0
+    utilidades_debe = 0
+    utilidades_haber = 0
     if request.method == 'POST':
         periodo_id = request.POST.get('periodo')
         
